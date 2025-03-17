@@ -251,3 +251,16 @@ class Node:
             return True
         else:
             return False
+
+    @property
+    def previous_visible_token_is_comma(self) -> bool:
+        """
+        True if the last visible token before this node is a comma
+        """
+
+        prev = (
+            self.previous_node.previous_node if self.previous_node is not None else None
+        )
+        if not prev:
+            return False
+        return prev.is_comma

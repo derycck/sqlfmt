@@ -281,7 +281,9 @@ class LineMerger:
         precedence = op_tiers.pop()
 
         for i, segment in enumerate(segments[1:], start=1):
-            if not self._segment_continues_operator_sequence(segment, precedence):
+            if not self._segment_continues_operator_sequence(
+                segment, precedence, self.mode.comma_style
+            ):
                 new_segments.extend(
                     self._try_merge_operator_segments(segments[head:i], op_tiers.copy())
                 )
@@ -297,7 +299,10 @@ class LineMerger:
 
     @classmethod
     def _segment_continues_operator_sequence(
-        cls, segment: Segment, max_precedence: OperatorPrecedence
+        cls,
+        segment: Segment,
+        max_precedence: OperatorPrecedence,
+        comma_style: str = "trailing",
     ) -> bool:
         """
         Returns true if the first line of the segment is part
@@ -309,11 +314,15 @@ class LineMerger:
             # if a segment is blank, keep scanning
             return True
         else:
+            if comma_style == "leading":
+                comma_rule = line.nodes[0].previous_visible_token_is_comma
+            else:
+                comma_rule = line.starts_with_comma
             return (
                 line.starts_with_operator
                 and not line.previous_token_is_comma
                 and OperatorPrecedence.from_node(line.nodes[0]) <= max_precedence
-            ) or line.starts_with_comma
+            ) or comma_rule
 
     def _try_merge_operator_segments(
         self, segments: List[Segment], op_tiers: List[OperatorPrecedence]
@@ -357,7 +366,9 @@ class LineMerger:
             if (
                 # always stubbornly merge P0 operators (e.g., `over`)
                 self._segment_continues_operator_sequence(
-                    segment, max_precedence=OperatorPrecedence.OTHER_TIGHT
+                    segment,
+                    max_precedence=OperatorPrecedence.OTHER_TIGHT,
+                    comma_style=self.mode.comma_style,
                 )
             ):
                 new_segments = self._stubbornly_merge(new_segments, segment)
@@ -373,7 +384,9 @@ class LineMerger:
 
         starts_with_p1_operator = [
             self._segment_continues_operator_sequence(
-                segment, max_precedence=OperatorPrecedence.COMPARATORS
+                segment,
+                max_precedence=OperatorPrecedence.COMPARATORS,
+                comma_style=self.mode.comma_style,
             )
             for segment in segments
         ]

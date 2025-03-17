@@ -31,6 +31,7 @@ class Mode:
     no_progressbar: bool = False
     no_color: bool = False
     force_color: bool = False
+    comma_style: str = "trailing"
 
     def __post_init__(self) -> None:
         # get the dialect from its name.
@@ -45,6 +46,15 @@ class Mode:
                 f"Mode was created with dialect_name={self.dialect_name}, "
                 "which is not supported. Did you mean 'polyglot'?"
             ) from e
+
+        comma_styles = {"trailing", "leading"}
+        if self.comma_style in comma_styles:
+            self.comma_style = self.comma_style
+        else:
+            raise SqlfmtConfigError(
+                f"Mode was created with comma_style={self.comma_style}, "
+                f"which is not supported. Must be one of: {comma_styles}"
+            )
 
     @property
     def color(self) -> bool:

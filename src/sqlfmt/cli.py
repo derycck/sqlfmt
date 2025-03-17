@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List, Union
 
 import click
-
 from sqlfmt import api
 from sqlfmt.config import load_config_file
 from sqlfmt.mode import Mode
@@ -150,6 +149,19 @@ from sqlfmt.mode import Mode
         "The SQL dialect for the target files. Nearly all dialects are supported "
         "by the default polyglot dialect. Select the ClickHouse dialect to respect "
         "case sensitivity in function, field, and alias names."
+    ),
+)
+@click.option(
+    "-c",
+    "--comma-style",
+    envvar="SQLFMT_COMMA_STYLE",
+    type=click.Choice(["leading", "trailing"], case_sensitive=False),
+    default="trailing",
+    help=(
+        "Specify the comma placement style for SQL formatting. "
+        "'leading' for commas at the beginning of lines, or 'trailing' for "
+        "commas at the end of lines. "
+        "Defaults to 'trailing'."
     ),
 )
 @click.argument(

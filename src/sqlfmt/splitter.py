@@ -64,6 +64,9 @@ class LineSplitter:
         """
         Return True if we should split before node
         """
+        comma_rule = (
+            node.is_comma if self.node_manager.comma_style == "leading" else False
+        )
         if (
             # if there is a multiline node on this line and it isn't the
             # only thing on this line, then split before the multiline node
@@ -79,6 +82,7 @@ class LineSplitter:
             or node.is_closing_jinja_block
             # always split before a node that divides queries
             or node.divides_queries
+            or comma_rule
         ):
             return True
         # split if an opening bracket immediately follows
@@ -108,9 +112,12 @@ class LineSplitter:
         Return False, False if splitting after should depend on the
         contents of the next node
         """
+        comma_rule = (
+            node.is_comma if self.node_manager.comma_style == "trailing" else False
+        )
         if (
             # always split after any comma that doesn't end a line
-            node.is_comma
+            comma_rule
             # always split after a token that increases depth
             or node.is_opening_bracket
             or node.is_opening_jinja_block

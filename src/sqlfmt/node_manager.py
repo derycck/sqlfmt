@@ -8,8 +8,11 @@ from sqlfmt.tokens import Token, TokenType
 
 
 class NodeManager:
-    def __init__(self, case_sensitive_names: bool) -> None:
+    def __init__(
+        self, case_sensitive_names: bool, comma_style: str = "trailing"
+    ) -> None:
         self.case_sensitive_names = case_sensitive_names
+        self.comma_style = comma_style
 
     def create_node(self, token: Token, previous_node: Optional[Node]) -> Node:
         """

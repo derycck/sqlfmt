@@ -20,7 +20,9 @@ class QueryFormatter:
         Splits lines to make line depth consistent and syntax
         apparent
         """
-        node_manager = NodeManager(self.mode.dialect.case_sensitive_names)
+        node_manager = NodeManager(
+            self.mode.dialect.case_sensitive_names, self.mode.comma_style
+        )
         splitter = LineSplitter(node_manager)
         new_lines = []
         for line in lines:
@@ -107,16 +109,11 @@ class QueryFormatter:
         """
         lines = raw_query.lines
 
-        pipeline = [
-            self._split_lines,
-            self._format_jinja,
-            self._dedent_jinja_blocks,
-            self._merge_lines,
-            self._remove_extra_blank_lines,
-        ]
-
-        for transform in pipeline:
-            lines = transform(lines)
+        lines = self._split_lines(lines)
+        lines = self._format_jinja(lines)
+        lines = self._dedent_jinja_blocks(lines)
+        lines = self._merge_lines(lines)
+        lines = self._remove_extra_blank_lines(lines)
 
         formatted_query = Query(
             source_string=raw_query.source_string,

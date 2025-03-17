@@ -7,14 +7,38 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/shandy-sqlfmt)
 ![Runs on Linux | MacOS | Windows](https://img.shields.io/badge/runs%20on-Linux%20%7C%20MacOS%20%7C%20Windows-blue)
 
+## Current Fork: Leading Comma Support
+**This fork of [sqlfmt](https://github.com/tconbeer/sqlfmt) implements the option to format SQL in the leading comma style.** This feature is likely required for ongoing projects, enhancing code readability and maintaining a consistent style across SQL queries.
 
-sqlfmt formats your dbt SQL files so you don't have to. It is similar in nature to black, gofmt, 
-and rustfmt (but for SQL). 
+```sql
+SELECT
+    column1
+    , column2
+    , column3
+FROM
+    table_name
+WHERE
+    condition1
+    , condition2
+```
+
+**How to** use the leading comma style:
+```bash
+sqlfmt . --dialect clickhouse --comma-style leading
+```
+
+**Known limitations:**
+- The leading comma style does not format jinja code, preserving the same code.
+
+---
+
+sqlfmt formats your dbt SQL files so you don't have to. It is similar in nature to black, gofmt,
+and rustfmt (but for SQL).
 
 1. **sqlfmt promotes collaboration.** An auto-formatter makes it easier to collaborate with your team and solicit contributions from new people. You will never have to mention (or argue about) code style in code reviews again.
 2. **sqlfmt is fast.** Forget about formatting your code, and spend your time on business logic instead. sqlfmt processes hundreds of files per second and only operates on files that have changed since the last run.
 3. **sqlfmt works with Jinja.** It formats the code that users look at, and therefore doesn't need to know anything about what happens after the templates are rendered.
-3. **sqlfmt integrates with your workflow.** As a CLI written in Python, it's easy to install locally on any OS and run in CI. Plays well with dbt, pre-commit, SQLFluff, VSCode, and GitHub Actions. sqlfmt powers the dbt Cloud IDE's Format button.
+4. **sqlfmt integrates with your workflow.** As a CLI written in Python, it's easy to install locally on any OS and run in CI. Plays well with dbt, pre-commit, SQLFluff, VSCode, and GitHub Actions. sqlfmt powers the dbt Cloud IDE's Format button.
 
 sqlfmt is not configurable, except for line length. It enforces a single style. sqlfmt maintains comments and some extra newlines, but largely ignores all indentation and line breaks in the input file.
 
